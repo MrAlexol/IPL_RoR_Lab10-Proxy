@@ -1,0 +1,13 @@
+<h1 class="m-3">Поиск последовательности</h1>
+<p class="m-3 text-truncate">Будет определена наиболее длинная монотонно возрастающая последовательность чисел.</p>
+<div class="w-50">
+    <%= form_tag nil, method: 'get', class: 'm-3', id: 'input_form' do %>
+            <div class="col-12"><%= label_tag :values, 'Введите последовательность чисел через пробел:' %></div>
+            <div class="row mt-2">
+                <div class="col-11 p-1 m-0"><%= text_field_tag :values, '', class: 'form-control', required: true %></div>
+                <div class="col-1 p-1 m-0"><%= button_tag "Получить ответ в HTML", id: 'btn_commit_html', type: 'submit', name: nil, class: 'btn btn-primary', formaction: "#{negotiator_view_path}.html" %></div>
+                <div class="col-1 p-1 m-0"><%= button_tag "Получить ответ в XML", id: 'btn_commit_xml', type: 'submit', name: nil, class: 'btn btn-primary', formaction: "#{negotiator_view_path}.xml" %></div>
+                <div class="col-1 p-1 m-0"><%= button_tag "Посмотреть XML", id: 'btn_commit_xml_raw', type: 'submit', name: nil, class: 'btn btn-primary', formaction: "#{negotiator_rawview_path}.xml" %></div>
+            </div>
+    <% end %>
+</div>
