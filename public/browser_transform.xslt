@@ -5,38 +5,51 @@
 <xsl:template match="/">
 <!-- Правило обработки корневого элемента XML - документа -->
 <HTML>
+<HEAD>
+    <TITLE>Преобразование XML</TITLE>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+</HEAD>
 <BODY>
+<h1 class="m-3">Результат поиска</h1>
 <xsl:if test="output/input">
-    <P>Вы ввели: <xsl:value-of select="output/input"/></P>
+    <P class="m-3">Вы ввели: <xsl:value-of select="output/input"/></P>
 </xsl:if> 
 <xsl:choose>
 <xsl:when test="output/error">
-    <P>Ошибка: <xsl:value-of select="output/error"/></P>
+    <P class="text-danger m-3">Ошибка: <xsl:value-of select="output/error"/></P>
 </xsl:when> 
 <xsl:otherwise>
-<TABLE BORDER="2"> <TR>
-            <TH>No.</TH>
-            <TH>Последовательность</TH>
+<DIV class="w-25 m-3 table-responsive">
+<TABLE class="table table-striped table-sm table-bordered"> 
+    <THEAD class="text-center">
+    <TR>
+            <TH scope="col">No.</TH>
+            <TH scope="col">Последовательность</TH>
     </TR>
+    </THEAD>
     <xsl:for-each select="output/calculations/sequence">
     <!-- Перебор в цикле всех элементов sequence. -->
     <TR>
-    <TD><xsl:value-of select="@data-index"/></TD>
-    <!-- Выбор значения атрибута id элемента language --> 
+        <TH scope="row" class="col-1 text-center"><xsl:value-of select="@data-index"/></TH>
 
-    <TD><xsl:value-of select="."/></TD>
-    <!-- Содержимое текущего элемента (контекст) -->
+        <TD><xsl:value-of select="."/></TD>
+        <!-- Содержимое текущего элемента (контекст) -->
 
     </TR> 
     </xsl:for-each> 
     
     <TR>
-    <TD>Ответ</TD>
+    <TH scope="row" class="col-1 text-center">Ответ</TH>
     <TD><xsl:value-of select="output/answer/sequence"/></TD>
     </TR>
 </TABLE> 
+</DIV>
 </xsl:otherwise>
 </xsl:choose>
+<BUTTON type="button" class="btn btn-link">
+    <A href="/">Домой</A>
+</BUTTON>
 </BODY>
 </HTML>
 
