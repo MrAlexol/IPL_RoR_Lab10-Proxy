@@ -19,9 +19,8 @@ class NegotiatorController < ApplicationController
         @output = xslt_transform(responce).to_html
         render 'view'
       end
-      format.xml do
-        render xml: insert_browser_xslt(responce).to_xml
-      end
+      format.xml { render xml: insert_browser_xslt(responce).to_xml }
+      format.rss { render xml: insert_browser_xslt(responce).to_xml }
     end
   end
 
