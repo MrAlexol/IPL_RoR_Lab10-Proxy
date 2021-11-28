@@ -4,6 +4,5 @@ Rails.application.routes.draw do
   get 'negotiator/input'
   get 'negotiator/view'
   get 'negotiator/rawview'
-  get 'negotiator/xslt'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

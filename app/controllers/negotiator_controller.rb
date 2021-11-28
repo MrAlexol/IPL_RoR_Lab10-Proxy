@@ -1,17 +1,23 @@
+# frozen_string_literal: true
+
 require 'http'
 require 'nokogiri'
 
 # Класс контроллера-посредника
 class NegotiatorController < ApplicationController
+  BASE_API_URL           = 'http://localhost:3000/sequence/view'
+  XSLT_BROWSER_TRANSFORM = '/browser_transform.xslt'
+  XSLT_SERVER_TRANSFORM  = "#{Rails.root}/public/server_transform.xslt"
+
   def input
   end
 
   def view
-    make_query 'http://localhost:3000/sequence/view'
+    @responce = make_query BASE_API_URL
     respond_to do |format|
       format.html do
         doc = Nokogiri::XML(@responce)
-        xslt = Nokogiri::XSLT(File.read(File.expand_path('../assets/stylesheets/style.xsl', __dir__)))
+        xslt = Nokogiri::XSLT(File.read(XSLT_SERVER_TRANSFORM))
         @output = xslt.transform(doc)
         render 'view'
       end
@@ -23,13 +29,8 @@ class NegotiatorController < ApplicationController
   end
 
   def rawview
-    make_query 'http://localhost:3000/sequence/view'
+    @responce = make_query BASE_API_URL
     render xml: @responce
-  end
-
-  def xslt
-    send_data(File.read(File.expand_path('../assets/stylesheets/style.xsl', __dir__)),
-              type: 'text/xml', filename: 'xslt.xsl')
   end
 
   private
@@ -37,7 +38,6 @@ class NegotiatorController < ApplicationController
   def make_query(server_url)
     query_str = "#{server_url}.xml"
     query_str << "?values=#{@input}" if (@input = params[:values]&.split(' ')&.join('+'))
-    @responce = HTTP.get(query_str).body
-    nil
+    HTTP.get(query_str).body
   end
 end
