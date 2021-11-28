@@ -13,24 +13,21 @@ class NegotiatorController < ApplicationController
   end
 
   def view
-    @responce = make_query BASE_API_URL
+    responce = make_query BASE_API_URL
     respond_to do |format|
       format.html do
-        doc = Nokogiri::XML(@responce)
-        xslt = Nokogiri::XSLT(File.read(XSLT_SERVER_TRANSFORM))
-        @output = xslt.transform(doc)
+        @output = xslt_transform(responce).to_html
         render 'view'
       end
       format.xml do
-        render 'view'
+        render xml: insert_browser_xslt(responce).to_xml
       end
     end
-    puts @responce.class
   end
 
   def rawview
-    @responce = make_query BASE_API_URL
-    render xml: @responce
+    responce = make_query BASE_API_URL
+    render xml: responce
   end
 
   private
@@ -39,5 +36,24 @@ class NegotiatorController < ApplicationController
     query_str = "#{server_url}.xml"
     query_str << "?values=#{@input}" if (@input = params[:values]&.split(' ')&.join('+'))
     HTTP.get(query_str).body
+  end
+
+  def xslt_transform(data, transform: XSLT_SERVER_TRANSFORM)
+    doc = Nokogiri::XML(data)
+    xslt = Nokogiri::XSLT(File.read(transform))
+    xslt.transform(doc)
+  end
+
+  # Чтобы преобразование XSLT на клиенте работало, надо вставить ссылку на XSLT.
+  # Делается это с помощью nokogiri через ProcessingInstruction (потому что ссылка
+  # на XSLT называется в XML processing instruction).
+  def insert_browser_xslt(data, transform: XSLT_BROWSER_TRANSFORM)
+    doc = Nokogiri::XML(data)
+    xslt = Nokogiri::XML::ProcessingInstruction.new(doc,
+                                                    'xml-stylesheet',
+                                                    'type="text/xsl" href="' + transform + '"')
+    doc.root.add_previous_sibling(xslt)
+    # Возвращаем doc, так как предыдущая операция возвращает не XML-документ.
+    doc
   end
 end
